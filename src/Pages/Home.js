@@ -2,6 +2,20 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 
 class Home extends Component {
+  state = {
+    Nav: false
+  }
+  // Toggle Menu
+  showNav = () => {
+    const likes = document.querySelector('header ul');
+    if (this.state.Nav === false) {
+      likes.style.display = 'block';
+      this.setState(() => ({Nav: true}));
+    } else {
+      likes.style.display = 'none';
+      this.setState(() => ({Nav: false}));
+    }
+  }
   render() {
     return (
       <div className="Home black-style">
@@ -11,7 +25,7 @@ class Home extends Component {
           <div className="container">
             <Link className="logo" to='/'>Synd<span>o</span></Link>
             <nav>
-              <i className="fas fa-bars toggle-menu"></i>
+              <i className="fas fa-bars toggle-menu" onClick={(e) => this.showNav(e)}></i>
               <ul>
                 <li><Link to='/Posts' >Posts</Link></li>
                 <li><a href="#">Testimonials</a></li>

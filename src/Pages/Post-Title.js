@@ -2,6 +2,140 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 
 class PostTitle extends Component {
+  state = {
+    option1: false,
+    option2: false,
+    option3: false,
+    amount: 500,
+    name: 'Jane Doe',
+    cardNum: '',
+    cvvNum: '',
+  }
+
+  // Showbox [Invest Now]  
+  showBoxInvest = () => {
+    const Investment = document.getElementById('investment');
+    const Stap1 = document.getElementById('box-0001');
+    Investment.style.display = 'flex';
+    Stap1.style.display = 'block';
+  }
+
+  // Close Box Invest Now  
+  closeBox = () => {
+    const Investment = document.getElementById('investment');
+    const Stap1 = document.getElementById('box-0001');
+    const Stap2 = document.getElementById('box-0002');
+    const Stap3 = document.getElementById('box-0003');
+    Investment.style.display = 'none';
+    Stap1.style.display = 'none';
+    Stap2.style.display = 'none';
+    Stap3.style.display = 'none';
+  }
+
+  // Range Amount input function
+  RangeAmount = (Amount) => {
+    // Determine the amount
+    this.setState( () => ({amount: Amount.trim()}) );
+
+    // Style Range
+    const rangeInputs = document.getElementById('range')
+    function handleInputChange(e) {
+      let target = e.target
+      if (e.target.type !== 'range') {
+        target = document.getElementById('range')
+      } 
+      const min = target.min
+      const max = target.max
+      const val = target.value  
+      target.style.backgroundSize = (val - min) * 100 / (max - min) + '% 100%'
+    }
+    rangeInputs.addEventListener('input', handleInputChange);
+    
+    // Style bubble Range
+    const allRanges = document.querySelectorAll(".range-wrap");
+    allRanges.forEach(wrap => {
+      const range = wrap.querySelector(".range");
+      const bubble = wrap.querySelector(".output");
+      setBubble(range, bubble);
+    });
+
+    function setBubble(range, bubble) {
+      const val = range.value;
+      const min = range.min ? range.min : 0;
+      const max = range.max ? range.max : 100;
+      const newVal = Number(((val - min) * 100) / (max - min));
+      bubble.innerHTML = val + " EGP";
+
+      bubble.style.left = `calc(${newVal}%)`;
+    }
+  }
+
+  // Moving from the first step to the second
+  Next1 = (e) => {
+    e.preventDefault();
+    const Stap1 = document.getElementById('box-0001');
+    const Stap2 = document.getElementById('box-0002');
+    Stap1.style.display = 'none';
+    Stap2.style.display = 'block';
+  }
+  // Moving from the second to the third step
+  Next2 = (e) => {
+    e.preventDefault();
+
+    const Stap2 = document.getElementById('box-0002');
+    const Stap3 = document.getElementById('box-0003');
+    
+    const name = document.getElementById('name').value;
+    const cardNumber = document.getElementById('cardNumber').value;
+    const expiresDate = document.getElementById('expiresDate').value;
+    const cvv = document.getElementById('cvv').value;
+
+    if (name === '') {
+      alert("Sorry, Your name is required to complete the process");
+    } if (cardNumber === '') {
+      alert("Sorry, Your card Number is required to complete the process");
+    } if (cardNumber.length < 16) {
+      alert("Check the card number again");
+    } if (expiresDate === '') {
+      alert("Sorry, Expiry Date is required to complete the process");
+    } if (cvv.length < 3) {
+      alert("CVV must not be less than three numbers");
+    } else {
+      Stap2.style.display = 'none';
+      Stap3.style.display = 'block';
+    }
+  }
+
+  // Back from the second step to the first
+  BackStep = (e) => {
+    e.preventDefault();
+    const Stap1 = document.getElementById('box-0001');
+    const Stap2 = document.getElementById('box-0002');
+    Stap1.style.display = 'block';
+    Stap2.style.display = 'none';
+  }
+
+  // option 1, option 2, option 3 
+  checkbox1 = () => this.setState( () => ( (this.state.option1) ? ({option1: false}) : ({option1: true})));
+  checkbox2 = () => this.setState( () => ( (this.state.option2) ? ({option2: false}) : ({option2: true})));
+  checkbox3 = () => this.setState( () => ( (this.state.option3) ? ({option3: false}) : ({option3: true})));
+
+
+  // Check Cardholder name
+  NameUser = (Name) => this.setState(() => ({name: Name.trim()}));
+  // Check Card Number
+  CardNum = (Num) => {
+    if(!isNaN(Num)) {
+      this.setState(() => ({cardNum: Num.trim()}));
+    }
+  }
+  // Check CVV
+  CVVNum = (CVV) => {
+    if(!isNaN(CVV)){
+      this.setState( () => ( {cvvNum: CVV.trim()} ) );
+    }
+  }
+
   render() {
     return (
       <div className="PostsTitle-Page white-style">
@@ -45,7 +179,7 @@ class PostTitle extends Component {
                             <a href="#"><i className="fab fa-instagram"></i></a>
                             <a href="#"><i className="fab fa-linkedin-in"></i></a>
                         </div>
-                        <button className="button-style-2">Invest Now</button>
+                        <button id="InvestNow" className="button-style-2" onClick={() => this.showBoxInvest()}>Invest Now</button>
                     </div>
                     <ul className="tabs">
                         <li>Pitch</li>
@@ -186,6 +320,157 @@ class PostTitle extends Component {
           </div>
         </div>
         {/* End PostsTitle */}
+
+        {/* Start Investment */}
+        <form id="investment" className="investment">
+          {/* Start Stap 1 */}
+          <div id="box-0001" className="investment-box">
+            <i className="fas fa-times close" onClick={() => this.closeBox()}></i>
+            <div className="content">
+              <h2>Investment Request</h2>
+              <div className="steps">
+                <p className="bold">Investment</p>
+                <p>Pay</p>
+              </div>
+              <div className="request">
+                <div className="balance">
+                  <p>Current Available Balance</p>
+                  <p className="bold">50,000 EGP</p>
+                </div>
+                <div className="range-wrap">
+                  <p>Amount (request)</p>
+                  <input id="range" className="range" type="range" name="range" min="500" max="100000" step="100" value={this.state.amount} onChange={(e) => this.RangeAmount(e.target.value)} />
+                  <span className="output">{this.state.amount + " EGP"}</span>
+                </div>
+                <div className="roi">
+                  <p>Expected ROI</p>
+                  <p className="bold">{this.state.amount/5 + " EGP"}</p>
+                </div>
+                <div className="risk">
+                  <h3>Risk Disclaimer</h3>
+                  <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                </div>
+                <div className="terms">
+                  <label className="form-control">
+                    <input type="checkbox" name="checkbox" checked={this.state.option1 !== false} onChange={e => this.checkbox1(e.target.value)} />
+                    <span>By clicking <b>Next</b> you agree to syndo's <b>terms</b></span>
+                  </label>
+                </div>
+              </div>
+              <div className="post-summary">
+                <h3>Post Summary</h3>
+                <p>Post</p>
+                <p className="bold">Post Title</p>
+                <p>Tenor</p>
+                <p className="bold">2 months</p>
+                <p>Tolal raised</p>
+                <p className="bold">50,000 EGP (40%) of 250,000 EPG</p>
+                <p>Expected Net ROL</p>
+                <p className="bold">2%</p>
+                <div></div>
+              </div>
+            </div>
+            <div className="btn-request">
+              <button onClick={() => this.closeBox()}>Cancel</button>
+              <button className="next" disabled={this.state.option1 === false} onClick={(e) => this.Next1(e)}>Next</button>
+            </div>
+          </div>
+          {/* End Stap 1 */}
+          {/* Start Stap 2 */}
+          <div id="box-0002" className="investment-box">
+            <i className="fas fa-times close" onClick={() => this.closeBox()}></i>
+            <div className="content">
+              <h2>Investment Request</h2>
+              <div className="steps">
+                <p className="bold">Investment</p>
+                <p className="bold">Pay</p>
+              </div>
+              <div className="request">
+                <div className="balance">
+                  <p>Investment Amount</p>
+                  <p>{this.state.amount + " EGP"}</p>
+                </div>
+                <p>Please enter your card details to secure investment.</p>
+                <p> Cash will only be deducted on campaign completion.</p>
+                <div className="form">
+                  <label>Cardholder name</label>
+                  <input type="text" id="name" name="name" placeholder="Your Name" value={this.state.name} onChange={(e) => this.NameUser(e.target.value)} required/>
+                  <label>Card Number</label>
+                  <input type="password" id="cardNumber" name="cardNumber" maxLength="16" placeholder="Card Number" value={this.state.cardNum} onChange={(e) => this.CardNum(e.target.value)} required></input>
+                  <label>Expiry date</label>
+                  <input type="month" id="expiresDate" name="expiresDate" placeholder="MM / YY" required/>
+                  <label>CVV</label> 
+                  <input type="password" id="cvv" maxLength="3" name="cvv" placeholder="CVV" value={this.state.cvvNum} onChange={(e) => this.CVVNum(e.target.value)} required />
+                </div>
+                <div className="terms">
+                  <label className="form-control">
+                    <input type="checkbox" name="checkbox" checked={this.state.option2 !== false} onChange={e => this.checkbox2(e.target.value)} />
+                    <span>Save card for future investments</span>
+                  </label>
+                  <label className="form-control">
+                    <input type="checkbox" name="checkbox" checked={this.state.option3 !== false} onChange={e => this.checkbox3(e.target.value)} />
+                    <span>By clicking <b>Invest</b> you agree to syndo's <b>terms</b></span>
+                  </label>
+                </div>
+              </div>
+              <div className="post-summary">
+                <h3>Post Summary</h3>
+                <p>Post</p>
+                <p className="bold">Post Title</p>
+                <p>Tenor</p>
+                <p className="bold">2 months</p>
+                <p>Tolal raised</p>
+                <p className="bold">50,000 EGP (40%) of 250,000 EPG</p>
+                <p>Expected Net ROL</p>
+                <p className="bold">2%</p>
+                <div></div>
+              </div>
+            </div>
+            <div className="btn-request">
+              <button onClick={(e) => this.BackStep(e)}>Back</button>
+              <button className="next" disabled={this.state.option3 === false} onClick={(e) => this.Next2(e)}>{"Invest " + (this.state.amount) + " EGP"}</button>
+            </div>
+          </div>
+          {/* End Stap 2 */}
+          {/* Start Stap 3 */}
+          <div id="box-0003" className="investment-box">
+            <i className="fas fa-times close" onClick={() => this.closeBox()}></i>
+            <div className="content">
+              <div className="request">
+                <div className="successfully">
+                <h2 className="text-center">Thanks you!</h2>
+                </div>
+                <div className="successfully">
+                  <p>Your invesrmnet request is created successfully.</p>
+                </div>
+                <div className="successfully">
+                  <p>Investment Ref.</p>
+                  <p className="bold">#SYINV000001</p>
+                </div>
+                <div className="successfully">
+                  <p>Investment Amount.</p>
+                  <p className="bold">{this.state.amount + " EGP"}</p>
+                </div>
+                <div className="successfully">
+                  <p>Post</p>
+                  <p className="bold">Post Title</p>
+                </div>
+                <div className="successfully">
+                  <p>Investment Agreements</p>
+                  <a href="#" className="bold">Download here</a>
+                </div>
+                <div className="successfully">
+                  <p>Investment amount will be deducted automatically on post completion, you can cancel your investment before completion form <a href="#">here</a></p>
+                </div>
+              </div>
+            </div>
+            <div className="btn-request">
+              <button className="next" onClick={() => this.closeBox()}>Close</button>
+            </div>
+          </div>
+          {/* End Stap 3 */}
+        </form>
+        {/* End Investment */}
 
         {/* Start Footer */}
         <div className="footer">
